@@ -1,316 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Account - Ubicuo Music</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<title>Delete Account - Sceniva AI</title>
+        body {
+            font-family: 'PT Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #102b3e 0%, #24273d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-<style>
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
 
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-background:linear-gradient(135deg,#B83AD2,#B83999,#0CA7E1);
-min-height:100vh;
-color:white;
-}
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-/* HEADER */
+        .warning-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #ff6b6b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
 
-.header{
-padding:25px 40px;
-font-size:28px;
-font-weight:600;
-}
+        h1 {
+            color: #102b3e;
+            font-size: 26px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
 
-/* CENTER */
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
 
-.container{
-display:flex;
-justify-content:center;
-align-items:center;
-padding:60px 20px;
-}
+        .warnings {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
 
-/* CARD */
+        .warnings h3 {
+            color: #102b3e;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
 
-.card{
-background:white;
-color:#333;
-width:520px;
-padding:40px;
-border-radius:16px;
-box-shadow:0 20px 60px rgba(0,0,0,0.25);
-}
+        .warnings ul {
+            list-style: none;
+            margin-left: 0;
+        }
 
-.card h2{
-margin-top:0;
-color:#B83AD2;
-}
+        .warnings li {
+            color: #666;
+            font-size: 13px;
+            padding: 5px 0;
+            margin-left: 20px;
+            position: relative;
+        }
 
-.description{
-color:#666;
-line-height:1.6;
-margin-bottom:25px;
-}
+        .warnings li:before {
+            content: "•";
+            position: absolute;
+            left: -15px;
+            color: #ff9800;
+        }
 
-.label{
-color:#0CA7E1;
-font-weight:600;
-margin-bottom:8px;
-}
+        .confirmation-section {
+            margin: 25px 0;
+        }
 
-/* INPUTS */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
 
-input{
-width:100%;
-padding:13px;
-margin-top:8px;
-margin-bottom:15px;
-border-radius:8px;
-border:1px solid #ddd;
-font-size:14px;
-box-sizing:border-box;
-}
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #4aacda;
+        }
 
-/* CHECKBOX */
+        .checkbox-wrapper label {
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
-.checkbox{
-display:flex;
-align-items:flex-start;
-gap:10px;
-font-size:14px;
-margin-bottom:20px;
-color:#444;
-text-align:left;
-}
+        .input-group {
+            margin: 20px 0;
+        }
 
-.checkbox input{
-width:auto;
-margin-top:3px;
-}
+        .input-group label {
+            display: block;
+            color: #102b3e;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
 
-/* BUTTON */
+        .input-group input[type="email"],
+        .input-group input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'PT Sans', sans-serif;
+            transition: border-color 0.3s;
+        }
 
-.delete-btn{
-width:100%;
-padding:14px;
-background:linear-gradient(90deg,#B83AD2,#B83999);
-border:none;
-border-radius:8px;
-color:white;
-font-size:16px;
-cursor:pointer;
-transition:0.3s;
-}
+        .input-group input[type="email"]:focus,
+        .input-group input[type="password"]:focus {
+            outline: none;
+            border-color: #4aacda;
+            box-shadow: 0 0 0 3px rgba(74, 172, 218, 0.1);
+        }
 
-.delete-btn:hover{
-opacity:0.9;
-}
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
 
-.delete-btn:disabled{
-opacity:0.5;
-cursor:not-allowed;
-}
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'PT Sans', sans-serif;
+        }
 
-/* HELP SECTION */
+        .btn-cancel {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
 
-.help{
-text-align:center;
-margin-top:50px;
-padding:0 20px;
-}
+        .btn-cancel:hover {
+            background-color: #e8e8e8;
+            border-color: #bbb;
+        }
 
-.help h3{
-font-size:26px;
-}
+        .btn-delete {
+            background-color: #ff4444;
+            color: white;
+        }
 
-.email{
-color:#ffffff;
-margin-top:10px;
-font-weight:500;
-}
+        .btn-delete:hover:not(:disabled) {
+            background-color: #cc0000;
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+        }
 
-/* FOOTER */
+        .btn-delete:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
 
-.footer{
-text-align:center;
-margin-top:40px;
-padding-bottom:30px;
-color:#eee;
-font-size:14px;
-}
+        .error-message {
+            color: #ff4444;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
 
-/* TOAST */
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
 
-.toast{
-position:fixed;
-bottom:30px;
-left:50%;
-transform:translateX(-50%);
-background:#333;
-color:white;
-padding:12px 20px;
-border-radius:8px;
-opacity:0;
-transition:0.4s;
-font-size:14px;
-z-index:999;
-}
+        .footer-text {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
 
-.toast.show{
-opacity:1;
-}
+        .footer-text a {
+            color: #4aacda;
+            text-decoration: none;
+        }
 
-.success{
-background:#0CA7E1;
-}
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
 
-.error{
-background:#e53935;
-}
+        /* Loading animation */
+        .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #4aacda;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
 
-</style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
+        .btn-delete.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-delete.loading .spinner {
+            display: inline-block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <div class="success-message" id="successMessage">
+            ✓ Your account has been successfully deleted. Redirecting...
+        </div>
 
-<div class="header">
-Sceniva AI – Image Generator
-</div>
+        <div class="header">
+            <div class="warning-icon">⚠️</div>
+            <h1>Delete Account</h1>
+            <p class="subtitle">This action cannot be undone. All your data will be permanently removed.</p>
+        </div>
 
-<div class="container">
+        <div class="warnings">
+            <h3>Important Information:</h3>
+            <ul>
+                <li>All your personal data, uploads, and history will be deleted</li>
+                <li>Your rewards and participation records will be removed</li>
+                <li>This action is permanent and cannot be reversed</li>
+                <li>You will lose access to all premium features</li>
+            </ul>
+        </div>
 
-<div class="card">
+        <form id="deleteAccountForm">
+            <div class="confirmation-section">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="confirmDelete" name="confirmDelete" required>
+                    <label for="confirmDelete">I understand that my account and all data will be permanently deleted</label>
+                </div>
 
-<h2>Delete Your Account</h2>
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="confirmUnderstand" name="confirmUnderstand" required>
+                    <label for="confirmUnderstand">I confirm this decision and accept that it cannot be undone</label>
+                </div>
+            </div>
 
-<p class="description">
-Deleting your account will permanently remove your Sceniva AI account,
-generated content, saved data, and associated records.
-You will lose access to all services connected to your account.
-</p>
+            <div class="input-group">
+                <label for="email">Your Email Address *</label>
+                <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
 
-<div class="label">
-Authentication Required
-</div>
+            <div class="input-group">
+                <label for="password">Your Password *</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div class="error-message" id="passwordError"></div>
+            </div>
 
-<input id="email" type="email" placeholder="Enter email">
+            <div class="button-group">
+                <button type="button" class="btn-cancel" onclick="goBack()">Cancel</button>
+                <button type="submit" class="btn-delete" id="deleteBtn">
+                    <span class="spinner"></span>
+                    Delete My Account
+                </button>
+            </div>
 
-<input id="password" type="password" placeholder="Password">
+            <p class="footer-text">
+                Need help? <a href="mailto:support@ubicuo.com">Contact our support team</a>
+            </p>
+        </form>
+    </div>
 
-<div class="checkbox">
-<input id="confirmCheck" type="checkbox">
-<span>
-I understand that deleting my account is permanent and cannot be undone.
-</span>
-</div>
+    <script>
+        // Form validation and submission
+        document.getElementById('deleteAccountForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-<button id="deleteBtn" class="delete-btn" disabled>
-Delete Account
-</button>
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmDelete = document.getElementById('confirmDelete').checked;
+            const confirmUnderstand = document.getElementById('confirmUnderstand').checked;
+            const deleteBtn = document.getElementById('deleteBtn');
 
-<p style="margin-top:10px;font-size:14px;color:#666;">
-This action cannot be reversed.
-</p>
+            // Clear previous errors
+            document.getElementById('emailError').style.display = 'none';
+            document.getElementById('passwordError').style.display = 'none';
 
-</div>
+            // Validation
+            if (!email || !password) {
+                if (!email) document.getElementById('emailError').textContent = 'Email is required';
+                if (!password) document.getElementById('passwordError').textContent = 'Password is required';
+                document.getElementById('emailError').style.display = 'block';
+                document.getElementById('passwordError').style.display = 'block';
+                return;
+            }
 
-</div>
+            if (!confirmDelete || !confirmUnderstand) {
+                alert('Please confirm both checkboxes to proceed');
+                return;
+            }
 
-<div class="help">
+            // Show loading state
+            deleteBtn.disabled = true;
+            deleteBtn.classList.add('loading');
+            deleteBtn.innerHTML = '<span class="spinner"></span>Deleting...';
 
-<h3>Need Help?</h3>
+            try {
+                // Send delete request to your backend
+                const response = await fetch('/api/delete-account', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
 
-<p>
-If you have any questions or require assistance, please contact support.
-</p>
+                const data = await response.json();
 
-<div class="email">
-📧 harisyounus921@gmail.com
-</div>
+                if (response.ok) {
+                    // Show success message
+                    document.getElementById('deleteAccountForm').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
 
-</div>
+                    // Redirect after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 3000);
+                } else {
+                    throw new Error(data.message || 'Failed to delete account');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                deleteBtn.disabled = false;
+                deleteBtn.classList.remove('loading');
+                deleteBtn.innerHTML = 'Delete My Account';
+            }
+        });
 
-<div class="footer">
-© 2026 Sceniva AI – Image Generator
-</div>
+        function goBack() {
+            window.history.back();
+        }
 
-<div id="toast" class="toast"></div>
-
-<script>
-
-const checkbox = document.getElementById("confirmCheck");
-const deleteBtn = document.getElementById("deleteBtn");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const toast = document.getElementById("toast");
-
-/* Enable / Disable button */
-
-checkbox.addEventListener("change", () => {
-deleteBtn.disabled = !checkbox.checked;
-});
-
-/* Toast function */
-
-function showToast(message,type){
-
-toast.innerText = message;
-toast.className = "toast show " + type;
-
-setTimeout(()=>{
-toast.className = "toast";
-},3000);
-
-}
-
-/* Delete button click */
-
-deleteBtn.addEventListener("click", () => {
-
-if(!checkbox.checked){
-
-showToast(
-"Please confirm the checkbox before deleting.",
-"error"
-);
-
-return;
-
-}
-
-if(email.value.trim()=="" || password.value.trim()==""){
-
-showToast(
-"Please enter email and password.",
-"error"
-);
-
-return;
-
-}
-
-/* Simulate success */
-
-showToast(
-"Account deletion request submitted successfully.",
-"success"
-);
-
-/* Clear fields */
-
-email.value="";
-password.value="";
-checkbox.checked=false;
-deleteBtn.disabled=true;
-
-});
-
-</script>
-
+        // Email validation on change
+        document.getElementById('email').addEventListener('change', function() {
+            const email = this.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                document.getElementById('emailError').style.display = 'block';
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
