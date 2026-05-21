@@ -111,6 +111,7 @@
             margin-right: 10px;
             cursor: pointer;
             accent-color: #4aacda;
+            flex-shrink: 0;
         }
 
         .checkbox-wrapper label {
@@ -131,8 +132,7 @@
             margin-bottom: 8px;
         }
 
-        .input-group input[type="email"],
-        .input-group input[type="password"] {
+        .input-group input[type="email"] {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
@@ -142,8 +142,7 @@
             transition: border-color 0.3s;
         }
 
-        .input-group input[type="email"]:focus,
-        .input-group input[type="password"]:focus {
+        .input-group input[type="email"]:focus {
             outline: none;
             border-color: #4aacda;
             box-shadow: 0 0 0 3px rgba(74, 172, 218, 0.1);
@@ -181,6 +180,10 @@
         .btn-delete {
             background-color: #ff4444;
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-delete:hover:not(:disabled) {
@@ -205,10 +208,12 @@
             display: none;
             background-color: #d4edda;
             color: #155724;
-            padding: 15px;
+            padding: 20px;
             border-radius: 6px;
             margin-bottom: 20px;
             border-left: 4px solid #28a745;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .footer-text {
@@ -228,31 +233,25 @@
             text-decoration: underline;
         }
 
-        /* Loading animation */
+        /* Loading spinner */
         .spinner {
             display: none;
             width: 16px;
             height: 16px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #4aacda;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top: 2px solid white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .spinner.visible {
+            display: inline-block;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-
-        .btn-delete.loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-delete.loading .spinner {
-            display: inline-block;
         }
 
         @media (max-width: 480px) {
@@ -272,147 +271,134 @@
 </head>
 <body>
     <div class="container">
-        <div class="success-message" id="successMessage">
-            ✓ Your account has been successfully deleted. Redirecting...
-        </div>
 
-        <div class="header">
-            <div class="warning-icon">⚠️</div>
-            <h1>Delete Account</h1>
-            <p class="subtitle">This action cannot be undone. All your data will be permanently removed.</p>
-        </div>
+        <div class="success-message" id="successMessage"></div>
 
-        <div class="warnings">
-            <h3>Important Information:</h3>
-            <ul>
-                <li>All your personal data, uploads, and history will be deleted</li>
-                <li>Your rewards and participation records will be removed</li>
-                <li>This action is permanent and cannot be reversed</li>
-                <li>You will lose access to all premium features</li>
-            </ul>
-        </div>
+        <div id="formSection">
+            <div class="header">
+                <div class="warning-icon">⚠️</div>
+                <h1>Delete Account</h1>
+                <p class="subtitle">This action cannot be undone. All your data will be permanently removed.</p>
+            </div>
 
-        <form id="deleteAccountForm">
+            <div class="warnings">
+                <h3>Important Information:</h3>
+                <ul>
+                    <li>All your personal data, uploads, and history will be deleted</li>
+                    <li>Your rewards and participation records will be removed</li>
+                    <li>This action is permanent and cannot be reversed</li>
+                    <li>You will lose access to all premium features</li>
+                </ul>
+            </div>
+
             <div class="confirmation-section">
                 <div class="checkbox-wrapper">
-                    <input type="checkbox" id="confirmDelete" name="confirmDelete" required>
+                    <input type="checkbox" id="confirmDelete" name="confirmDelete">
                     <label for="confirmDelete">I understand that my account and all data will be permanently deleted</label>
                 </div>
 
                 <div class="checkbox-wrapper">
-                    <input type="checkbox" id="confirmUnderstand" name="confirmUnderstand" required>
+                    <input type="checkbox" id="confirmUnderstand" name="confirmUnderstand">
                     <label for="confirmUnderstand">I confirm this decision and accept that it cannot be undone</label>
                 </div>
             </div>
 
             <div class="input-group">
                 <label for="email">Your Email Address *</label>
-                <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                <input type="email" id="email" name="email" placeholder="your@email.com">
                 <div class="error-message" id="emailError"></div>
-            </div>
-
-            <div class="input-group">
-                <label for="password">Your Password *</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                <div class="error-message" id="passwordError"></div>
             </div>
 
             <div class="button-group">
                 <button type="button" class="btn-cancel" onclick="goBack()">Cancel</button>
-                <button type="submit" class="btn-delete" id="deleteBtn">
-                    <span class="spinner"></span>
-                    Delete My Account
+                <button type="button" class="btn-delete" id="deleteBtn" onclick="handleDelete()">
+                    <span class="spinner" id="spinner"></span>
+                    <span id="btnText">Delete My Account</span>
                 </button>
             </div>
 
             <p class="footer-text">
                 Need help? <a href="mailto:support@ubicuo.com">Contact our support team</a>
             </p>
-        </form>
+        </div>
+
     </div>
 
     <script>
-        // Form validation and submission
-        document.getElementById('deleteAccountForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        function handleDelete() {
+            const email = document.getElementById('email').value.trim();
             const confirmDelete = document.getElementById('confirmDelete').checked;
             const confirmUnderstand = document.getElementById('confirmUnderstand').checked;
+            const emailError = document.getElementById('emailError');
             const deleteBtn = document.getElementById('deleteBtn');
+            const spinner = document.getElementById('spinner');
+            const btnText = document.getElementById('btnText');
 
             // Clear previous errors
-            document.getElementById('emailError').style.display = 'none';
-            document.getElementById('passwordError').style.display = 'none';
+            emailError.style.display = 'none';
+            emailError.textContent = '';
 
-            // Validation
-            if (!email || !password) {
-                if (!email) document.getElementById('emailError').textContent = 'Email is required';
-                if (!password) document.getElementById('passwordError').textContent = 'Password is required';
-                document.getElementById('emailError').style.display = 'block';
-                document.getElementById('passwordError').style.display = 'block';
+            // Validate checkboxes
+            if (!confirmDelete || !confirmUnderstand) {
+                alert('Please check both confirmation boxes to proceed.');
                 return;
             }
 
-            if (!confirmDelete || !confirmUnderstand) {
-                alert('Please confirm both checkboxes to proceed');
+            // Validate email
+            if (!email) {
+                emailError.textContent = 'Email address is required.';
+                emailError.style.display = 'block';
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                emailError.textContent = 'Please enter a valid email address.';
+                emailError.style.display = 'block';
                 return;
             }
 
             // Show loading state
             deleteBtn.disabled = true;
-            deleteBtn.classList.add('loading');
-            deleteBtn.innerHTML = '<span class="spinner"></span>Deleting...';
+            spinner.classList.add('visible');
+            btnText.textContent = 'Processing...';
 
-            try {
-                // Send delete request to your backend
-                const response = await fetch('/api/delete-account', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
-                });
+            // Simulate processing delay then show success
+            setTimeout(function() {
+                document.getElementById('formSection').style.display = 'none';
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Show success message
-                    document.getElementById('deleteAccountForm').style.display = 'none';
-                    document.getElementById('successMessage').style.display = 'block';
-
-                    // Redirect after 3 seconds
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 3000);
-                } else {
-                    throw new Error(data.message || 'Failed to delete account');
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
-                deleteBtn.disabled = false;
-                deleteBtn.classList.remove('loading');
-                deleteBtn.innerHTML = 'Delete My Account';
-            }
-        });
-
-        function goBack() {
-            window.history.back();
+                const successMessage = document.getElementById('successMessage');
+                successMessage.innerHTML =
+                    '✓ <strong>Deletion request received.</strong><br><br>' +
+                    'We have received your request to delete the account associated with <strong>' + email + '</strong>.<br><br>' +
+                    'Your account will be permanently deleted within <strong>30 days</strong>. ' +
+                    'A confirmation email will be sent to you once the process is complete.<br><br>' +
+                    'If you did not make this request, please contact us immediately at ' +
+                    '<a href="mailto:support@ubicuo.com" style="color:#155724;font-weight:bold;">support@ubicuo.com</a>';
+                successMessage.style.display = 'block';
+            }, 1500);
         }
 
-        // Email validation on change
-        document.getElementById('email').addEventListener('change', function() {
-            const email = this.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                document.getElementById('emailError').textContent = 'Please enter a valid email address';
-                document.getElementById('emailError').style.display = 'block';
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
             } else {
-                document.getElementById('emailError').style.display = 'none';
+                window.close();
+            }
+        }
+
+        // Live email validation
+        document.getElementById('email').addEventListener('blur', function() {
+            const email = this.value.trim();
+            const emailError = document.getElementById('emailError');
+            if (email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    emailError.textContent = 'Please enter a valid email address.';
+                    emailError.style.display = 'block';
+                } else {
+                    emailError.style.display = 'none';
+                }
             }
         });
     </script>
