@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Delete Account - Sceniva AI</title>
+
+<style>
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+background:linear-gradient(135deg,#B83AD2,#B83999,#0CA7E1);
+min-height:100vh;
+color:white;
+}
+
+/* HEADER */
+
+.header{
+padding:25px 40px;
+font-size:28px;
+font-weight:600;
+}
+
+/* CENTER */
+
+.container{
+display:flex;
+justify-content:center;
+align-items:center;
+padding:60px 20px;
+}
+
+/* CARD */
+
+.card{
+background:white;
+color:#333;
+width:520px;
+padding:40px;
+border-radius:16px;
+box-shadow:0 20px 60px rgba(0,0,0,0.25);
+}
+
+.card h2{
+margin-top:0;
+color:#B83AD2;
+}
+
+.description{
+color:#666;
+line-height:1.6;
+margin-bottom:25px;
+}
+
+.label{
+color:#0CA7E1;
+font-weight:600;
+margin-bottom:8px;
+}
+
+/* INPUTS */
+
+input{
+width:100%;
+padding:13px;
+margin-top:8px;
+margin-bottom:15px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:14px;
+box-sizing:border-box;
+}
+
+/* CHECKBOX */
+
+.checkbox{
+display:flex;
+align-items:flex-start;
+gap:10px;
+font-size:14px;
+margin-bottom:20px;
+color:#444;
+text-align:left;
+}
+
+.checkbox input{
+width:auto;
+margin-top:3px;
+}
+
+/* BUTTON */
+
+.delete-btn{
+width:100%;
+padding:14px;
+background:linear-gradient(90deg,#B83AD2,#B83999);
+border:none;
+border-radius:8px;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.delete-btn:hover{
+opacity:0.9;
+}
+
+.delete-btn:disabled{
+opacity:0.5;
+cursor:not-allowed;
+}
+
+/* HELP SECTION */
+
+.help{
+text-align:center;
+margin-top:50px;
+padding:0 20px;
+}
+
+.help h3{
+font-size:26px;
+}
+
+.email{
+color:#ffffff;
+margin-top:10px;
+font-weight:500;
+}
+
+/* FOOTER */
+
+.footer{
+text-align:center;
+margin-top:40px;
+padding-bottom:30px;
+color:#eee;
+font-size:14px;
+}
+
+/* TOAST */
+
+.toast{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+background:#333;
+color:white;
+padding:12px 20px;
+border-radius:8px;
+opacity:0;
+transition:0.4s;
+font-size:14px;
+z-index:999;
+}
+
+.toast.show{
+opacity:1;
+}
+
+.success{
+background:#0CA7E1;
+}
+
+.error{
+background:#e53935;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Sceniva AI – Image Generator
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Delete Your Account</h2>
+
+<p class="description">
+Deleting your account will permanently remove your Sceniva AI account,
+generated content, saved data, and associated records.
+You will lose access to all services connected to your account.
+</p>
+
+<div class="label">
+Authentication Required
+</div>
+
+<input id="email" type="email" placeholder="Enter email">
+
+<input id="password" type="password" placeholder="Password">
+
+<div class="checkbox">
+<input id="confirmCheck" type="checkbox">
+<span>
+I understand that deleting my account is permanent and cannot be undone.
+</span>
+</div>
+
+<button id="deleteBtn" class="delete-btn" disabled>
+Delete Account
+</button>
+
+<p style="margin-top:10px;font-size:14px;color:#666;">
+This action cannot be reversed.
+</p>
+
+</div>
+
+</div>
+
+<div class="help">
+
+<h3>Need Help?</h3>
+
+<p>
+If you have any questions or require assistance, please contact support.
+</p>
+
+<div class="email">
+📧 harisyounus921@gmail.com
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 Sceniva AI – Image Generator
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+
+const checkbox = document.getElementById("confirmCheck");
+const deleteBtn = document.getElementById("deleteBtn");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const toast = document.getElementById("toast");
+
+/* Enable / Disable button */
+
+checkbox.addEventListener("change", () => {
+deleteBtn.disabled = !checkbox.checked;
+});
+
+/* Toast function */
+
+function showToast(message,type){
+
+toast.innerText = message;
+toast.className = "toast show " + type;
+
+setTimeout(()=>{
+toast.className = "toast";
+},3000);
+
+}
+
+/* Delete button click */
+
+deleteBtn.addEventListener("click", () => {
+
+if(!checkbox.checked){
+
+showToast(
+"Please confirm the checkbox before deleting.",
+"error"
+);
+
+return;
+
+}
+
+if(email.value.trim()=="" || password.value.trim()==""){
+
+showToast(
+"Please enter email and password.",
+"error"
+);
+
+return;
+
+}
+
+/* Simulate success */
+
+showToast(
+"Account deletion request submitted successfully.",
+"success"
+);
+
+/* Clear fields */
+
+email.value="";
+password.value="";
+checkbox.checked=false;
+deleteBtn.disabled=true;
+
+});
+
+</script>
+
+</body>
+</html>
