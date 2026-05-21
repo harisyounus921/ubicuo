@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Account Request - Ubicuo Music</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'PT Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #102b3e 0%, #24273d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+
+        .icon {
+            width: 60px; height: 60px;
+            background-color: #4aacda;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+
+        h1 { color: #102b3e; font-size: 26px; margin-bottom: 10px; font-weight: bold; }
+        .subtitle { color: #666; font-size: 14px; line-height: 1.6; }
+
+        .input-group { margin: 20px 0; }
+
+        .input-group label {
+            display: block; color: #102b3e;
+            font-weight: bold; font-size: 14px; margin-bottom: 8px;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%; padding: 12px;
+            border: 2px solid #e0e0e0; border-radius: 6px;
+            font-size: 14px; font-family: 'PT Sans', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .input-group textarea { resize: vertical; min-height: 90px; }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none; border-color: #4aacda;
+            box-shadow: 0 0 0 3px rgba(74,172,218,0.1);
+        }
+
+        .error-message { color: #ff4444; font-size: 13px; margin-top: 5px; display: none; }
+
+        .btn-submit {
+            width: 100%; padding: 12px;
+            background-color: #ff4444; color: white;
+            border: none; border-radius: 6px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            font-family: 'PT Sans', sans-serif; transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover { background-color: #cc0000; box-shadow: 0 5px 15px rgba(255,68,68,0.3); }
+        .btn-submit:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        .success-message {
+            display: none;
+            background-color: #d4edda; color: #155724;
+            padding: 20px; border-radius: 6px;
+            border-left: 4px solid #28a745;
+            font-size: 14px; line-height: 1.6;
+        }
+
+        .footer-text {
+            text-align: center; color: #999;
+            font-size: 12px; margin-top: 20px;
+        }
+
+        .footer-text a { color: #4aacda; text-decoration: none; }
+        .footer-text a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="success-message" id="successMessage"></div>
+
+    <div id="formSection">
+        <div class="header">
+            <div class="icon">🗑️</div>
+            <h1>Delete Account Request</h1>
+            <p class="subtitle">Submit your request below. Our team will process it within 30 days.</p>
+        </div>
+
+        <div class="input-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" placeholder="Your full name" />
+            <div class="error-message" id="nameError">Name is required.</div>
+        </div>
+
+        <div class="input-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" placeholder="your@email.com" />
+            <div class="error-message" id="emailError">Please enter a valid email.</div>
+        </div>
+
+        <div class="input-group">
+            <label for="reason">Reason (optional)</label>
+            <textarea id="reason" placeholder="Tell us why you want to delete your account…"></textarea>
+        </div>
+
+        <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">Submit Delete Request</button>
+
+        <p class="footer-text">
+            Changed your mind? <a href="mailto:support@ubicuo.com">Contact support</a>
+        </p>
+    </div>
+
+</div>
+
+<script>
+    function handleSubmit() {
+        const name  = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const nameError  = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        nameError.style.display  = 'none';
+        emailError.style.display = 'none';
+
+        let valid = true;
+        if (!name)                    { nameError.style.display  = 'block'; valid = false; }
+        if (!emailRegex.test(email))  { emailError.style.display = 'block'; valid = false; }
+        if (!valid) return;
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Submitting…';
+
+        setTimeout(() => {
+            document.getElementById('formSection').style.display = 'none';
+            const msg = document.getElementById('successMessage');
+            msg.innerHTML =
+                '✓ <strong>Request received!</strong><br><br>' +
+                'Hi <strong>' + escHtml(name) + '</strong>, we have received your account deletion request for <strong>' + escHtml(email) + '</strong>.<br><br>' +
+                'Your account will be permanently deleted within <strong>30 days</strong>. A confirmation will be sent to your email.';
+            msg.style.display = 'block';
+        }, 1200);
+    }
+
+    function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+</script>
+</body>
+</html>
